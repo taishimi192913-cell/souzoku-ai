@@ -1,0 +1,32 @@
+# Fly.io 設定 — 相続税AI バックエンド
+app = "souzoku-ai-api"
+primary_region = "nrt" # Tokyo
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+  DEEPSEEK_MODEL = "deepseek-v4-flash"
+  ALLOWED_ORIGINS = "https://souzoku-ai.com,https://souzoku-ai.vercel.app"
+  RATE_LIMIT_REQUESTS = "30"
+  RATE_LIMIT_WINDOW = "60"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    method = "GET"
+    path = "/api/health"
+
+[vm]
+  # BGE-M3埋め込みモデルのため2GB以上推奨
+  memory = "4096mb"
+  cpu_kind = "shared"
+  cpus = 2
